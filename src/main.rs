@@ -1,4 +1,5 @@
 mod day_1;
+mod day_2;
 
 use std::{env, path::Path};
 
@@ -13,7 +14,14 @@ fn main() {
     let input_file_name = Path::new(&input_file_name_str);
 
     let input_file_path = input_dir_path.join(input_file_name);
-    let result = day_1::solve(input_file_path.as_path());
+
+    let solver = match date {
+        1 => |x| day_1::solve(x),
+        2 => |x| day_2::solve(x),
+        _ => |_| (0,0)
+    };
+
+    let result = solver(input_file_path.as_path());
     println!("{}, {}", result.0, result.1);
 }
 
