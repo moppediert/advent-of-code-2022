@@ -1,5 +1,6 @@
 mod day_1;
 mod day_2;
+mod day_3;
 
 use std::{env, path::Path};
 
@@ -18,6 +19,7 @@ fn main() {
     let solver = match date {
         1 => |x| day_1::solve(x),
         2 => |x| day_2::solve(x),
+        3 => |x| day_3::solve(x),
         _ => |_| (0,0)
     };
 
