@@ -1,8 +1,4 @@
-use std::{
-    collections::{HashSet},
-    fs,
-    path::Path,
-};
+use std::{collections::HashSet, fs, path::Path};
 
 pub fn solve(path: &Path) -> (u32, u32) {
     let content = fs::read_to_string(path).expect("Cannot read input file");
@@ -17,9 +13,7 @@ pub fn solve(path: &Path) -> (u32, u32) {
         let second_section = pair.next().unwrap();
         let second_set = range_set(second_section);
 
-        if first_set.difference(&second_set).next() == None
-            || second_set.difference(&first_set).next() == None
-        {
+        if first_set.is_subset(&second_set) || second_set.is_subset(&first_set) {
             result_1 += 1;
         }
 
