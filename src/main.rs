@@ -1,6 +1,7 @@
 mod day_1;
 mod day_2;
 mod day_3;
+mod day_4;
 
 use std::{env, path::Path};
 
@@ -20,6 +21,7 @@ fn main() {
         1 => |x| day_1::solve(x),
         2 => |x| day_2::solve(x),
         3 => |x| day_3::solve(x),
+        4 => |x| day_4::solve(x),
         _ => |_| (0,0)
     };
 
