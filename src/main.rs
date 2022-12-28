@@ -2,6 +2,7 @@ mod day_1;
 mod day_2;
 mod day_3;
 mod day_4;
+mod day_5;
 
 use std::{env, path::Path};
 
@@ -18,15 +19,15 @@ fn main() {
     let input_file_path = input_dir_path.join(input_file_name);
 
     let solver = match date {
-        1 => |x| day_1::solve(x),
-        2 => |x| day_2::solve(x),
-        3 => |x| day_3::solve(x),
-        4 => |x| day_4::solve(x),
-        _ => |_| (0,0)
+        1 => |x| {println!("{:#?}", day_1::solve(x))},
+        2 => |x| {println!("{:#?}", day_2::solve(x))},
+        3 => |x| {println!("{:#?}", day_3::solve(x))},
+        4 => |x| {println!("{:#?}", day_4::solve(x))},
+        5 => |x| {println!("{:#?}", day_5::solve(x))},
+        _ => |_| {println!("Boringgggg")}
     };
 
-    let result = solver(input_file_path.as_path());
-    println!("{}, {}", result.0, result.1);
+    solver(input_file_path.as_path());
 }
 
 fn parse_arg() -> u8 {
