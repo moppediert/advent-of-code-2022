@@ -1,9 +1,4 @@
-use std::{
-    collections::{LinkedList, VecDeque},
-    fs,
-    path::Path,
-    result,
-};
+use std::{collections::VecDeque, fs, path::Path};
 
 pub fn solve(path: &Path) -> (String, String) {
     let content = fs::read_to_string(path).expect("Cannot read input file");
@@ -40,29 +35,23 @@ pub fn solve(path: &Path) -> (String, String) {
         let from = splits[3].parse::<usize>().unwrap() - 1;
         let to = splits[5].parse::<usize>().unwrap() - 1;
 
-        // debug_stack(&stacks[from], &stacks[to]);
         let len_from = stacks_1[from].len();
-        let mut drained = stacks_1[from]
-            .drain(len_from - amount..).rev().collect();
+        let mut drained = stacks_1[from].drain(len_from - amount..).rev().collect();
         stacks_1[to].append(&mut drained);
 
         let len_from = stacks_2[from].len();
-        let mut drained = stacks_2[from]
-            .drain(len_from - amount..).collect();
+        let mut drained = stacks_2[from].drain(len_from - amount..).collect();
         stacks_2[to].append(&mut drained);
-
-        // debug_stack(&stacks[from], &stacks[to]);
     }
 
-    let result_1 = stacks_1.iter().map(|x| x.back().unwrap()).collect::<String>();
-    let result_2 = stacks_2.iter().map(|x| x.back().unwrap()).collect::<String>();
-    (result_1, result_2)
-}
+    let result_1 = stacks_1
+        .iter()
+        .map(|x| x.back().unwrap())
+        .collect::<String>();
 
-fn debug_stack(v1: &VecDeque<char>, v2: &VecDeque<char>) {
-    println!(
-        "{:#?} &&& {:#?}",
-        v1.iter().rev().collect::<Vec<&char>>(),
-        v2.iter().rev().collect::<Vec<&char>>()
-    );
+    let result_2 = stacks_2
+        .iter()
+        .map(|x| x.back().unwrap())
+        .collect::<String>();
+    (result_1, result_2)
 }

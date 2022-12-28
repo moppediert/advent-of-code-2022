@@ -17,7 +17,6 @@ fn main() {
     let input_file_name = Path::new(&input_file_name_str);
 
     let input_file_path = input_dir_path.join(input_file_name);
-
     let solver = match date {
         1 => |x| {println!("{:#?}", day_1::solve(x))},
         2 => |x| {println!("{:#?}", day_2::solve(x))},
