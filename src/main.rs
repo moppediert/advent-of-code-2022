@@ -4,6 +4,7 @@ mod day_3;
 mod day_4;
 mod day_5;
 mod day_6;
+mod day_7;
 
 use std::{env, path::Path};
 
@@ -25,6 +26,8 @@ fn main() {
         4 => |x| {println!("{:#?}", day_4::solve(x))},
         5 => |x| {println!("{:#?}", day_5::solve(x))},
         6 => |x| {println!("{:#?}", day_6::solve(x))},
+        7 => |x| {println!("{:#?}", day_7::solve(x))},
+        
         _ => |_| {println!("Boringgggg")}
     };
 
