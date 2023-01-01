@@ -15,7 +15,8 @@ pub fn solve(path: &Path) -> (usize, usize) {
         let first = split.next().unwrap();
         if first.starts_with("$") {
             if split.next().unwrap() == "ls" {
-                // read files
+                // ignore since current dir is already set by `cd`
+                continue;
             } else {
                 // cd
                 let to_dir = split.next().unwrap();
