@@ -1,6 +1,6 @@
 use std::{borrow::Borrow, cell::RefCell, collections::HashMap, fmt, fs, path::Path, rc::Rc};
 
-pub fn solve(path: &Path) -> (usize, u32) {
+pub fn solve(path: &Path) -> (usize, usize) {
     let content = fs::read_to_string(path).expect("Cannot read input file");
     let mut file_system = HashMap::<String, Rc<RefCell<File>>>::new(); // <path, file>
 
@@ -30,7 +30,7 @@ pub fn solve(path: &Path) -> (usize, u32) {
                         let current_dir_path = Rc::as_ref(&current_dir).borrow().path.clone();
                         let split_path = current_dir_path.split_inclusive("/");
                         let new_path = if let Some(last) = split_path.last() {
-                            println!("last item = {}", last);
+                            // println!("last item = {}", last);
                             current_dir_path.strip_suffix(last).unwrap()
                         } else {
                             "/"
@@ -66,15 +66,31 @@ pub fn solve(path: &Path) -> (usize, u32) {
             file_system.insert(file_path, file);
         }
     }
-    // println!("{:#?}", &file_system);
+    let root = file_system.get("/").unwrap();
+    let usage = Rc::as_ref(&root).borrow().size;
+    let need_to_delete = 30000000 - (70000000 - usage);
+
+    let mut dir_to_delete;
+    let mut space_to_delete = usize::MAX;
+
     let mut sum = 0;
     for v in file_system.values() {
         if Rc::as_ref(&v).borrow().size <= 100000 && Rc::as_ref(&v).borrow().is_dir {
             sum += Rc::as_ref(&v).borrow().size;
         }
+
+        if Rc::as_ref(&v).borrow().size >= need_to_delete
+            && Rc::as_ref(&v).borrow().size < space_to_delete
+        {
+            dir_to_delete = Rc::as_ref(&v).borrow().path.clone();
+            space_to_delete = Rc::as_ref(&v).borrow().size;
+        }
     }
 
-    (sum, 0)
+    println!("need to delete {}", need_to_delete);
+    println!("space to delete {} ", space_to_delete);
+
+    (sum, space_to_delete)
 }
 
 fn file(parent_dir: Option<Rc<RefCell<File>>>, name: &str, size: usize) -> File {
