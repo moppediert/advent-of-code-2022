@@ -1,6 +1,6 @@
 use std::{borrow::Borrow, cell::RefCell, collections::HashMap, fmt, fs, path::Path, rc::Rc};
 
-pub fn solve(path: &Path) -> (u32, u32) {
+pub fn solve(path: &Path) -> (usize, u32) {
     let content = fs::read_to_string(path).expect("Cannot read input file");
     let mut file_system = HashMap::<String, Rc<RefCell<File>>>::new(); // <path, file>
 
@@ -35,9 +35,7 @@ pub fn solve(path: &Path) -> (u32, u32) {
                         } else {
                             "/"
                         };
-                        let previous_dir = Rc::clone(&current_dir);
                         current_dir = file_system.get(new_path).unwrap().clone();
-                        // println!("going back from {} to {}",  Rc::as_ref(&previous_dir).borrow().path, Rc::as_ref(&current_dir).borrow().path);
                     }
                     some_dir => {
                         // println!("{:#?}", &file_system);
@@ -68,9 +66,15 @@ pub fn solve(path: &Path) -> (u32, u32) {
             file_system.insert(file_path, file);
         }
     }
-    println!("{:#?}", &file_system);
+    // println!("{:#?}", &file_system);
+    let mut sum = 0;
+    for v in file_system.values() {
+        if Rc::as_ref(&v).borrow().size <= 100000 && Rc::as_ref(&v).borrow().is_dir {
+            sum += Rc::as_ref(&v).borrow().size;
+        }
+    }
 
-    (0, 0)
+    (sum, 0)
 }
 
 fn file(parent_dir: Option<Rc<RefCell<File>>>, name: &str, size: usize) -> File {
