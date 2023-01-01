@@ -5,7 +5,7 @@ pub fn solve(path: &Path) -> (usize, usize) {
     let mut file_system = HashMap::<String, Rc<RefCell<File>>>::new(); // <path, file>
 
     // Assume the first command is always `cd /`
-    let mut current_dir = Rc::new(RefCell::new(dir(None, "/")));
+    let mut current_dir = Rc::new(RefCell::new(File::root()));
     file_system.insert("/".to_string(), Rc::clone(&current_dir));
 
     let lines = content.split("\n").skip(1);
@@ -21,9 +21,8 @@ pub fn solve(path: &Path) -> (usize, usize) {
                 let to_dir = split.next().unwrap();
                 match to_dir {
                     "/" => {
-                        let root_dir = Rc::new(RefCell::new(dir(None, "/")));
+                        let root_dir = Rc::new(RefCell::new(File::root()));
                         current_dir = Rc::clone(&root_dir);
-                        file_system.insert("/".to_string(), root_dir);
                     }
                     ".." => {
                         let current_dir_path = current_dir.borrow().path.clone();
@@ -45,13 +44,16 @@ pub fn solve(path: &Path) -> (usize, usize) {
             }
         } else if first.starts_with("dir") {
             let dir_name = split.next().unwrap();
-            let new_dir = Rc::new(RefCell::new(dir(Some(Rc::clone(&current_dir)), dir_name)));
+            let new_dir = Rc::new(RefCell::new(File::dir(
+                Some(Rc::clone(&current_dir)),
+                dir_name,
+            )));
             let new_dir_path = new_dir.borrow().path.clone();
             file_system.insert(new_dir_path, new_dir);
         } else {
             let file_size = first.parse::<usize>().unwrap();
             let file_name = split.next().unwrap();
-            let file = Rc::new(RefCell::new(file(
+            let file = Rc::new(RefCell::new(File::file(
                 Some(Rc::clone(&current_dir)),
                 file_name,
                 file_size,
@@ -82,39 +84,6 @@ pub fn solve(path: &Path) -> (usize, usize) {
     (sum, space_to_delete)
 }
 
-fn file(parent_dir: Option<Rc<RefCell<File>>>, name: &str, size: usize) -> File {
-    let parent = parent_dir.unwrap(); // A file always has a parent, which is its directory
-    parent.borrow_mut().update_size(size);
-
-    File {
-        parent: Some(Rc::clone(&parent)),
-        path: format!("{}{}", parent.borrow().path, name),
-        is_dir: false,
-        name: name.to_string(),
-        size,
-    }
-}
-
-fn dir(parent_dir: Option<Rc<RefCell<File>>>, name: &str) -> File {
-    if let Some(parent) = parent_dir {
-        File {
-            parent: Some(Rc::clone(&parent)),
-            path: format!("{}{}/", parent.borrow().path, name),
-            is_dir: true,
-            name: name.to_string(),
-            size: 0,
-        }
-    } else {
-        File {
-            parent: None,
-            path: "/".to_string(),
-            is_dir: true,
-            name: "/".to_string(),
-            size: 0,
-        }
-    }
-}
-
 struct File {
     parent: Option<Rc<RefCell<File>>>,
     path: String,
@@ -130,6 +99,40 @@ impl fmt::Debug for File {
 }
 
 impl File {
+    fn root() -> File {
+        File {
+            parent: None,
+            path: "/".to_string(),
+            is_dir: true,
+            name: "/".to_string(),
+            size: 0,
+        }
+    }
+
+    fn dir(parent_dir: Option<Rc<RefCell<File>>>, name: &str) -> File {
+        let parent = parent_dir.unwrap(); // A dir that is not root always has a parent dir
+        File {
+            parent: Some(Rc::clone(&parent)),
+            path: format!("{}{}/", parent.borrow().path, name),
+            is_dir: true,
+            name: name.to_string(),
+            size: 0,
+        }
+    }
+
+    fn file(parent_dir: Option<Rc<RefCell<File>>>, name: &str, size: usize) -> File {
+        let parent = parent_dir.unwrap(); // A file always has a parent, which is its directory
+        parent.borrow_mut().update_size(size);
+
+        File {
+            parent: Some(Rc::clone(&parent)),
+            path: format!("{}{}", parent.borrow().path, name),
+            is_dir: false,
+            name: name.to_string(),
+            size,
+        }
+    }
+
     fn update_size(&mut self, child_size: usize) {
         self.size += child_size;
         if let Some(parent) = &self.parent {
