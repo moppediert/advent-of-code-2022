@@ -33,8 +33,19 @@ pub fn solve(path: &Path) -> (u32, u32) {
         visibility[i][height - 1] = true;
     }
 
+    // Rough idea
+    // If a tree is horizontally visible, it must be either taller than every tree on the left, or taller than every tree on the right
+    // Let's call the tree at position i in the horizontal array x_i. That means at least of of these two conditions must satisfy:
+    // x_i > x_j for all j < i or x_i > x_j for all j > i
+    // Let's sort the array from large to small values in a stable way, i.e. the indices of same values don't change their order
+    // If x_i > x_j for all j < i, after the sort, all x_j will appear on the right side of x_i, which means on the left side of x_i,
+    // there are only x_k with k > i. And due to the sort, x_k >= x_i for every x_k on the left side of x_i.
+    // Similarly, if x_i > x_j for all j > i, there will be only x_k on the left side with k < i.
+    // So what we have to do is to sort the array descendingly and check if every values on the left of x_i has ax exclusively
+    // smaller or larger INDEX than x_i, i.e. k < i or k > i.
+
     for w in 0..width {
-        
+        //TODO
     }
 
 
