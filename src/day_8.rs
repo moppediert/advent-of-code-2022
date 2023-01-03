@@ -5,11 +5,12 @@ pub fn solve(path: &Path) -> (u32, u32) {
 
     let mut matrix = vec![];
 
-    for line in content.split("\n") {
+    for (j, line) in content.split("\n").enumerate() {
         let vec = line
             .chars()
-            .map(|c| c.to_digit(10).unwrap())
-            .collect::<Vec<u32>>();
+            .enumerate()
+            .map(|(i, c)| (j, i, c.to_digit(10).unwrap()))
+            .collect::<Vec<(usize, usize, u32)>>();
         matrix.push(vec);
     }
     let height = matrix.len();
@@ -20,14 +21,12 @@ pub fn solve(path: &Path) -> (u32, u32) {
     let mut top = matrix[0].clone();
     let mut bottom = matrix[width - 1].clone();
 
-
-
     let mut visibility = vec![vec![false; width]; height];
     visibility[0] = vec![true; width];
     visibility[height - 1] = vec![true; width];
     for i in 0..height {
-        left[i] = matrix[i][0];
-        right[i] = matrix[i][width - 1];
+        // left[i] = matrix[i][0];
+        // right[i] = matrix[i][width - 1];
 
         visibility[i][0] = true;
         visibility[i][height - 1] = true;
@@ -44,10 +43,9 @@ pub fn solve(path: &Path) -> (u32, u32) {
     // So what we have to do is to sort the array descendingly and check if every values on the left of x_i has ax exclusively
     // smaller or larger INDEX than x_i, i.e. k < i or k > i.
 
-    for w in 0..width {
-        //TODO
-    }
-
+    let matrix = matrix.iter().enumerate().map(|(i, row)| {
+        row.iter().enumerate().map(|(j, val)| (j, i, val));
+    });
 
     (0, 0)
 }
